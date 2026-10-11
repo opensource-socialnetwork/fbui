@@ -13,60 +13,62 @@ define('__THEMEDIR__', ossn_route()->themes . 'fbui/');
 ossn_register_callback('ossn', 'init', 'ossn_fbui_theme_init');
 ossn_register_callback('ossn', 'init', 'fbui_user_profile_init', 1000);
 
-require_once(__THEMEDIR__ . 'lib/bpage.php');
+if(com_is_active('BusinessPage')){
+	require_once __THEMEDIR__ . 'lib/bpage.php';
+}
 
-function fbui_user_profile_init(){
+function fbui_user_profile_init() {
 		ossn_unregister_page('u');
 		ossn_register_page('u', '_profile_page_handler');
-		
-		ossn_unset_hook('newsfeed', "sidebar:right", 'ossn_birthdays_newsfeed');
-		
+
+		ossn_unset_hook('newsfeed', 'sidebar:right', 'ossn_birthdays_newsfeed');
+
 		ossn_register_page('play', 'games_page_handler');
 		ossn_register_page('groups_feed', 'groups_feed_updates_init');
-		
+
 		ossn_extend_view('css/ossn.default', 'games/css');
 }
 
-function groups_feed_updates_init(){
-				if(!ossn_isLoggedin()) {
-						//Redirect User to login page if session expired from home page #929
-						redirect('login');
-				}
-				$title               = ossn_print('fbui:groups:feed');
-				$contents['content'] = ossn_plugin_view('fbui/groups_feed');
-				$content = ossn_set_page_layout('newsfeed', $contents);
-				echo ossn_view_page($title, $content);	
+function groups_feed_updates_init() {
+		if(!ossn_isLoggedin()) {
+				//Redirect User to login page if session expired from home page #929
+				redirect('login');
+		}
+		$title               = ossn_print('fbui:groups:feed');
+		$contents['content'] = ossn_plugin_view('fbui/groups_feed');
+		$content             = ossn_set_page_layout('newsfeed', $contents);
+		echo ossn_view_page($title, $content);
 }
 function games_page_handler($pages) {
-    if (empty($pages[0])) {
-        $pages[0] = 'all';
-    }
+		if(empty($pages[0])) {
+				$pages[0] = 'all';
+		}
+		switch ($pages[0]) {
+		case 'all':
+				$title   = ossn_print('games:all');
+				$content = ossn_plugin_view('games/pages/all');
+				break;
 
-    switch ($pages[0]) {
-        case 'all':
-            $title = ossn_print('games:all');
-            $content = ossn_plugin_view('games/pages/all');
-            break;
-            
-        case 'game':
-            $title = ossn_print('games:play');
-            $content = ossn_plugin_view('games/pages/play', array('game_id' => $pages[1]));
-            break;
-            
-        default:
-            ossn_error_page();
-            break;
-    }
+		case 'game':
+				$title   = ossn_print('games:play');
+				$content = ossn_plugin_view('games/pages/play', array(
+						'game_id' => $pages[1],
+				));
+				break;
 
+		default:
+				ossn_error_page();
+				break;
+		}
 
-    
-	$contents = array(
+		$contents = array(
 				'content' => $content,
-	);
-	$content = ossn_set_page_layout('contents', $contents);
-	echo ossn_view_page($title, $content);
+		);
+		$content = ossn_set_page_layout('contents', $contents);
+		echo ossn_view_page($title, $content);
 }
 function ossn_fbui_theme_init() {
+		ossn_add_hook('newsfeed', 'sidebar:right', 'fbui_newsfeed_sidebar_widgets_right', 1);
 		//add bootstrap
 		ossn_new_css('bootstrap.min', 'css/bootstrap/bootstrap.min.css');
 
@@ -84,7 +86,7 @@ function ossn_fbui_theme_init() {
 		ossn_extend_view('ossn/site/head', 'ossn_fbui_head');
 		ossn_extend_view('js/opensource.socialnetwork', 'js/fbui');
 		ossn_extend_view('profile/newsfeed/info', 'fbui_search_bar_sidebar');
-		
+
 		if(ossn_isAdminLoggedin()) {
 				ossn_register_menu_item('admin/sidemenu', array(
 						'name'   => 'admin:theme:fbui',
@@ -97,13 +99,20 @@ function ossn_fbui_theme_init() {
 				//[E] Allow custom logos to be saved with different file name #2334
 				ossn_register_action('fbui/settings/logos_bgs_reset', __THEMEDIR__ . 'actions/logos_bgs_reset.php');
 		}
-		if(ossn_isLoggedin()){
+		if(ossn_isLoggedin()) {
 				ossn_register_action('fbuichat/friends', __THEMEDIR__ . 'actions/friends.php');
 				ossn_register_action('fbuichat/contacts_status', __THEMEDIR__ . 'actions/contacts_status.php');
 		}
-		
+
 		ossn_extend_view('ossn/site/head', 'theme_meta_favicon');
 		ossn_extend_view('ossn/admin/head', 'theme_meta_favicon');
+}
+function fbui_newsfeed_sidebar_widgets_right($hook, $type, $return) {
+		if(com_is_active('Birthdays')){
+			$return[] = ossn_plugin_view('fbui/birthdays');
+		}
+		$return[] = ossn_plugin_view('fbui/chat_sidebar');
+		return $return;
 }
 function _ossn_group_page($pages) {
 		if(empty($pages[0])) {
@@ -169,15 +178,19 @@ function _profile_page_handler($page) {
 		$content             = ossn_set_page_layout('profile', $contents);
 		echo ossn_view_page($title, $content);
 }
-function fbui_search_bar_sidebar(){
-		return ossn_view_form('search', array(
-								'component' => 'OssnSearch',
-								'class' => 'ossn-search',
-								'autocomplete' => 'off',
-								'method' => 'get',
-								'security_tokens' => false,
-								'action' => ossn_site_url("search"),
-		), false);	
+function fbui_search_bar_sidebar() {
+		return ossn_view_form(
+				'search',
+				array(
+						'component'       => 'OssnSearch',
+						'class'           => 'ossn-search',
+						'autocomplete'    => 'off',
+						'method'          => 'get',
+						'security_tokens' => false,
+						'action'          => ossn_site_url('search'),
+				),
+				false
+		);
 }
 function theme_meta_favicon() {
 		$icon = ossn_add_cache_to_url(ossn_theme_url() . 'images/favicon.ico');

@@ -29,7 +29,7 @@ $site_url = ossn_site_url();
 					</a>
 				</li>
 				<li>
-					<a href="<?php echo $site_url; ?>friends">
+					<a href="<?php echo $user->profileURL('/friends'); ?>">
 						<div class="fbui-sidebar-icon icon-friends">
 							<i class="fa-solid fa-user-group"></i>
 						</div>

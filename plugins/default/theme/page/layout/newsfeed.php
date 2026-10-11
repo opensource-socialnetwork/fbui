@@ -50,8 +50,6 @@ if(ossn_is_hook('newsfeed', "center:top")) {
                 <div class="newsfeed-right-sticky-wrapper">
                     <div class="newsfeed-right">
                         <?php echo $sidebar; ?>
-                        <?php echo ossn_plugin_view('fbui/birthdays'); ?>                                    
-                        <?php echo ossn_plugin_view('fbui/chat_sidebar'); ?>                                    
                     </div>
                     <?php echo ossn_plugin_view('theme/page/elements/footer');?>
                 </div>
