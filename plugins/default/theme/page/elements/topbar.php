@@ -8,6 +8,7 @@
 	}
 // 1. Get the current context (e.g., 'play/all', 'video/watch', 'home')
 $context = ossn_get_context();
+$custom_settings = ossn_fbui_get_custom_logos_bgs_setting();
 
 ?>
 
@@ -25,7 +26,11 @@ $active_games       = ($context == 'play/all') ? 'class="active"' : ''; // Match
 	<!-- LEFT: Desktop Circle Logo / Mobile Text Logo + Search Input -->
 <div class="fbui-topbar-left">
 		<a href="<?php echo ossn_site_url();?>" class="fbui-logo-icon" aria-label="Home">
-			<img src="<?php echo ossn_theme_url(); ?>images/icon.png" alt="Logo" class="fbui-logo-img" />
+            <?php if (isset($custom_settings) && isset($custom_settings['icon_site'])) { ?>
+                <img class="main-logo" src="<?php echo ossn_add_cache_to_url(ossn_theme_url("logos_backgrounds/icon_site_{$custom_settings['icon_site']}")); ?>" />
+            <?php } else { ?>
+                <img class="fbui-logo-img" src="<?php echo ossn_theme_url(); ?>images/icon.png" />
+            <?php } ?>            
 		</a>	
 		<?php if(ossn_isLoggedin()){ ?>
 		<div class="fbui-search-box position-relative">
