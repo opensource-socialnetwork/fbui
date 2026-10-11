@@ -90,7 +90,11 @@ body { background:#fff; }
             <div class="auth-switch-text">
                 <?php echo ossn_print('auth:dont:have:account'); ?> <a href="javascript:void(0);" onclick="toggleAuthForms('signup')"><?php echo ossn_print('auth:create:new:account'); ?></a>
             </div>
-           <img class="sidepanel-logo" src="<?php echo ossn_theme_url(); ?>images/logo.png" />
+            <?php if (isset($custom_settings) && isset($custom_settings['logo_site'])) { ?>
+                <img class="sidepanel-logo" src="<?php echo ossn_add_cache_to_url(ossn_theme_url("logos_backgrounds/logo_site_{$custom_settings['logo_site']}")); ?>" />
+            <?php } else { ?>
+                <img class="sidepanel-logo" src="<?php echo ossn_theme_url(); ?>images/logo.png" />
+            <?php } ?>   
         </div>
 
         <!-- SIGNUP FORM VIEW (Hidden by default, toggled via JS) -->
