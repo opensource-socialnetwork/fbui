@@ -122,7 +122,62 @@ Ossn.RegisterStartupFunction(function() {
 			$('.group-c-position').attr('style', 'display:inline-block !important;');
 			$('.ossn-group-cover-button').hide();
 			$('.ossn-group-cover').unbind('mouseenter').unbind('mouseleave');
-			Ossn.Drag();
+			Ossn.Drag(function(ui) {	
+				//make picture not to move out from the container
+				y1 = $('.ossn-group-cover').height();
+				y2 = $('.ossn-group-cover').find('img').height();
+				if (ui.position.top >= 0) {
+					ui.position.top = 0;
+				} else if (ui.position.top <= (y1 - y2)) {
+					ui.position.top = y1 - y2;
+				}
+				
+				var current_cover_height = 0;
+				var current_cover_width = 0;
+				if ($('.ossn-group-cover').length) {
+					current_cover_height = ~~($('.ossn-group-cover').height() + 0.5);
+					current_cover_width = ~~($('.ossn-group-cover').width() + 0.5);
+				}
+				if (current_cover_width < 1024) {
+					var theme_config = $('#ossn-theme-config');
+					var default_cover_height = theme_config.attr('data-desktop-cover-height');
+					var default_cover_width = theme_config.attr('data-minimum-cover-image-width');
+
+					// we're on mobile
+					const desktop_cover_width = default_cover_width;
+					const desktop_cover_height = default_cover_height;
+
+					var real_image_width = document.querySelector("#draggable").naturalWidth;
+					var real_image_height = document.querySelector("#draggable").naturalHeight;
+					// 1. how many mobile heights would we need to hold the image?
+					var mobile_height_factor = real_image_height / current_cover_height;
+					// 2. how many pixels wide would be the scaled mobile image in comparison to fix desktop_cover_width?
+					var mobile_pixel_width = desktop_cover_width / mobile_height_factor;
+					// 3. how often would these pixels fit into the current coverwidth?
+					var mobile_width_factor = current_cover_width / mobile_pixel_width;
+					// 4. how many pixels do we get with the current mobile cover height?
+					var mobile_pixel_height = mobile_width_factor * current_cover_height;
+					mobile_pixel_width = parseInt($('#draggable').css('width'));
+
+					// 5. calculate the height-scaling factor for dragging - get maximum possible scroll top position
+					var desktop_scroll_top_max = real_image_height - desktop_cover_height;
+					var mobile_scroll_top_max = mobile_pixel_height - current_cover_height;
+					var height_scaling_factor = desktop_scroll_top_max / mobile_scroll_top_max;
+					// 6. calculate the width-scaling factor for dragging - get maximum possible scroll left position
+					var desktop_scroll_left_max = real_image_width - desktop_cover_width;
+					var mobile_scroll_left_max = mobile_pixel_width - current_cover_width;
+					var width_scaling_factor = desktop_scroll_left_max / mobile_scroll_left_max;
+
+					var cover_top = parseInt(ui.position.top);
+					var cover_left = parseInt(ui.position.left);
+
+					var mobile_pixel_top = cover_top * height_scaling_factor;
+					var mobile_pixel_left = cover_left * width_scaling_factor;
+					
+					$('.ossn-group-cover img').attr('data-scaled_top', parseInt(mobile_pixel_top)+"px");
+					$('.ossn-group-cover img').attr('data-scaled_left', parseInt(mobile_pixel_left)+"px");
+				}
+			});
 		});
 	});
 });
