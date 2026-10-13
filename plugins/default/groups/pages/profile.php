@@ -41,6 +41,9 @@ $members = false;
 if($params['group']->membership == OSSN_PUBLIC || ($params['group']->membership == OSSN_PRIVATE && $params['ismember'])){
 	$members = $params['group']->getMembers();
 }
+if($params['ismember']){
+	fbui_add_user_shortcut(ossn_loggedin_user()->guid, 'group', $params['group']->guid);	
+}
 ?>
 <div class="ossn-group-profile">
     <!-- FULL WIDTH TOP HEADER SECTION -->

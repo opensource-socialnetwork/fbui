@@ -20,7 +20,7 @@ if(ossn_is_hook('newsfeed', "sidebar:right")) {
 	<div class="ossn-layout-newsfeed">
 		<div class="row">
 			<div class="col-lg-2">
-				<div class="coloum-left ossn-page-contents">
+				<div class="coloum-left">
 					<?php
 						if (ossn_is_hook('search', "left")) {
 						   	$searchleft = ossn_call_hook('search', "left", NULL, array());

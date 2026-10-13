@@ -29,6 +29,13 @@ if(isset($params['page']->cover_entity_guid) && empty($params['page']->cover_ent
 $bluetick = ossn_plugin_view('bpage/verified', array(
 			'page' => $params['page'],
 ));
+$is_liked_check = false;
+if(ossn_isLoggedin()){
+	$is_liked_check = $like->isLiked($params['page']->guid, ossn_loggedin_user()->guid);
+	if($is_liked_check){
+		fbui_add_user_shortcut(ossn_loggedin_user()->guid, 'businesspage', $params['page']->guid);	
+	}
+}
 ?>
 
 <div class="business-page fbui-profile-page-wrapper w-100">
@@ -117,7 +124,7 @@ $bluetick = ossn_plugin_view('bpage/verified', array(
                     <?php } ?>
                     
                     <?php if(ossn_isLoggedin()){ ?>
-                        <?php if(!$like->isLiked($params['page']->guid, ossn_loggedin_user()->guid)){ ?>
+                        <?php if(!$is_liked_check){ ?>
                         <a href="javascript:void(0);" class="btn btn-primary fw-semibold px-4 py-2 d-flex align-items-center gap-2 shadow-sm like-page bpage-btn-blue" data-guid="<?php echo $params['page']->guid;?>">
                             <i class="fa fa-thumbs-up"></i><?php echo ossn_print('ossn:like');?>
                         </a>           

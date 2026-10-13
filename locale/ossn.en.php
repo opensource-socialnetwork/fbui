@@ -62,7 +62,7 @@ $en = array(
 		'fbui:marketplace:listing'       => 'Marketplace Listing',
 		'fbui:group'                     => 'Group',
 		'fbui:create'                    => 'Create',
-		'fbui:event'                     => 'Evemt',
+		'fbui:event'                     => 'Event',
 		'fbui:video'                     => 'Video',
 		'fbui:story'                     => 'Story',
 		'fbui:post'                      => 'Post',
@@ -92,5 +92,8 @@ $en = array(
 		'fbui:error:subtext'             => 'The link may be broken, or the page may have been removed.',
 		'fbui:button:back'               => 'Go Back',
 		'fbui:button:feed'               => 'News Feed',
+		'fbui:shortcuts'                 => 'Your shortcuts',
+		'fbui:see_more'                  => 'See more',
+		'fbui:see_less'                  => 'See less',
 );
 ossn_register_languages('en', $en);

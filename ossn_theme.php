@@ -17,6 +17,86 @@ if(com_is_active('BusinessPage')){
 	require_once __THEMEDIR__ . 'lib/bpage.php';
 }
 
+/**
+ * Add or update a user shortcut based on type and guid, keeping a max limit of 10.
+ *
+ * @param int    $user_id   The ID of the user
+ * @param string $type      The type of item (e.g., 'group', 'bpage')
+ * @param int    $guid      The entity GUID of the group or page
+ * @return bool
+ */
+function fbui_add_user_shortcut($user_id, $type, $guid) {
+    if (empty($user_id) || empty($type) || empty($guid)) {
+        return false;
+    }
+
+    // Use native OSSN user data directory
+    $user_dir = ossn_get_userdata("user/{$user_id}/shortcuts");
+    if (!is_dir($user_dir)) {
+        mkdir($user_dir, 0755, true);
+    }
+    
+    $file_path = $user_dir . "/shortcuts.json";
+    
+    $shortcuts = array();
+    if (file_exists($file_path)) {
+        $json_data = file_get_contents($file_path);
+        $decoded = json_decode($json_data, true);
+        if (is_array($decoded)) {
+            $shortcuts = $decoded;
+        }
+    }
+
+    // 1. Remove existing entry if it already exists (to prevent duplicates and bump to top)
+    $shortcuts = array_filter($shortcuts, function($item) use ($type, $guid) {
+        return !($item['type'] === $type && (int)$item['guid'] === (int)$guid);
+    });
+
+    // 2. RE-INDEX the array so keys are clean 0, 1, 2... (THIS FIXES THE BUG)
+    $shortcuts = array_values($shortcuts);
+
+    // 3. Create the new shortcut item storing just type and guid
+    $new_shortcut = array(
+        'type' => $type,
+        'guid' => (int) $guid,
+        'time' => time()
+    );
+
+    // 4. Prepend to the beginning of the array (most recent first)
+    array_unshift($shortcuts, $new_shortcut);
+
+    // 5. Enforce the strict maximum limit of 10 shortcuts
+    if (count($shortcuts) > 10) {
+        $shortcuts = array_slice($shortcuts, 0, 10);
+    }
+
+    // 6. Save back to the JSON file
+    return file_put_contents($file_path, json_encode(array_values($shortcuts), JSON_PRETTY_PRINT));
+}
+function fbui_delete_shortcut_action() {
+    $user = ossn_loggedin_user();
+    if(!$user) {
+        return;
+    }
+    
+    $type = input('type');
+    $guid = input('guid');
+    
+    // Load, filter out, and re-save the JSON file similar to your add function
+    $user_dir = ossn_get_userdata("user/{$user->guid}/shortcuts");
+    $file_path = $user_dir . "/shortcuts.json";
+    
+    if (file_exists($file_path)) {
+        $shortcuts = json_decode(file_get_contents($file_path), true);
+        if (is_array($shortcuts)) {
+            $shortcuts = array_filter($shortcuts, function($item) use ($type, $guid) {
+                return !($item['type'] === $type && (int)$item['guid'] === (int)$guid);
+            });
+            file_put_contents($file_path, json_encode(array_values($shortcuts), JSON_PRETTY_PRINT));
+        }
+    }
+    echo json_encode(array('success' => true));
+}
 function fbui_user_profile_init() {
 		ossn_unregister_page('u');
 		ossn_register_page('u', '_profile_page_handler');
@@ -102,6 +182,8 @@ function ossn_fbui_theme_init() {
 		if(ossn_isLoggedin()) {
 				ossn_register_action('fbuichat/friends', __THEMEDIR__ . 'actions/friends.php');
 				ossn_register_action('fbuichat/contacts_status', __THEMEDIR__ . 'actions/contacts_status.php');
+				ossn_register_action('fbui/shortcut/delete', __THEMEDIR__ . 'actions/shortcut/delete.php');
+				
 		}
 
 		ossn_extend_view('ossn/site/head', 'theme_meta_favicon');
@@ -113,42 +195,6 @@ function fbui_newsfeed_sidebar_widgets_right($hook, $type, $return) {
 		}
 		$return[] = ossn_plugin_view('fbui/chat_sidebar');
 		return $return;
-}
-function _ossn_group_page($pages) {
-		if(empty($pages[0])) {
-				ossn_error_page();
-		}
-		ossn_load_external_js('jquery.ui.touch.punch.js');
-		if(!empty($pages[0])) {
-				if(isset($pages[1])) {
-						$params['subpage'] = $pages[1];
-				} else {
-						$params['subpage'] = '';
-				}
-
-				if(!ossn_is_group_subapge($params['subpage']) && !empty($params['subpage'])) {
-						ossn_error_page();
-				}
-				$group = ossn_get_group_by_guid($pages[0]);
-				if(empty($group->guid)) {
-						ossn_error_page();
-				}
-				ossn_set_page_owner_guid($group->guid);
-				ossn_trigger_callback('page', 'load:group', array(
-						'group' => $group, //added OSSN 7.1
-				));
-				$ismember = false;
-				if(ossn_isLoggedin()) {
-						$ismember = $group->isMember(null, ossn_loggedin_user()->guid);
-				}
-				//[B] add group user membership status in advance to avoid checking multiple times #2276
-				$params['ismember'] = $ismember;
-				$params['group']    = $group;
-				$title              = $group->title;
-				$view               = ossn_plugin_view('groups/pages/profile', $params);
-				$content            = ossn_group_layout($view);
-				echo ossn_view_page($title, $content);
-		}
 }
 function _profile_page_handler($page) {
 		$user = ossn_user_by_username($page[0]);

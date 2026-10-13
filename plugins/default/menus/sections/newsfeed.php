@@ -119,7 +119,7 @@ $menus = $params['menu'];
 				<div class="fbui-create-divider"></div>
 				<?php if(com_is_active('BusinessPage')){ ?>
 				<li>
-					<a id="topbar-megamenu-groupadd" href="javascript::void(0);">
+					<a id="topbar-megamenu-groupadd" href="javascript::void(0);" onclick="$('#ossn-group-add').trigger('click');">
 						<span class="fbui-create-icon"><i class="fa fa-users"></i></span>
 						<?php echo ossn_print('fbui:group');?>
 					</a>

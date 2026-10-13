@@ -13,17 +13,12 @@ if (!ossn_isLoggedin()) {
     return;
 }
 
-// 1. Setup local 1-hour file cache
-$cache_file = ossn_get_userdata("gamepix_cache.json");
-$cache_time = 3600; // 1 hour
-
+$cache_file = ossn_route()->themes . "fbui/vendors/games/gamepix_cache.json";
 $all_games = array();
-
-if (file_exists($cache_file) && (time() - filemtime($cache_file) < $cache_time)) {
-    $cache_data = file_get_contents($cache_file);
-    $all_games = json_decode($cache_data, true);
-} else {
-    $api_url = "https://games.gamepix.com/games?pagination=100&page=1";
+$cache_data = file_get_contents($cache_file);
+$all_games = json_decode($cache_data, true);
+/**
+	$api_url = "https://games.gamepix.com/games?pagination=100&page=1";
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $api_url);
@@ -32,12 +27,6 @@ if (file_exists($cache_file) && (time() - filemtime($cache_file) < $cache_time))
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept: application/json, text/plain, */*',
-        'Accept-Language: en-US,en;q=0.9',
-        'Referer: https://games.gamepix.com/'
-    ));
 
     $response = curl_exec($ch);
     curl_close($ch);
@@ -69,7 +58,7 @@ if (file_exists($cache_file) && (time() - filemtime($cache_file) < $cache_time))
     if (empty($all_games) && file_exists($cache_file)) {
         $all_games = json_decode(file_get_contents($cache_file), true);
     }
-}
+}*/
 
 // 2. Extract unique categories for filter pills
 $categories = array('All');
@@ -109,7 +98,7 @@ if (!empty($search_query)) {
     });
 }
 
-$display_games = array_slice($display_games, 0, 36);
+$display_games = array_slice($display_games, 0, 150);
 
 // -------------------------------------------------------------
 // IF AJAX REQUEST: Check for 'ossn_ajax_games' flag so it doesn't conflict with Topbar PJAX

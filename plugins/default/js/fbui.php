@@ -562,3 +562,122 @@ $(document).ready(function() {
         handleSidebarScroll();
     });
 });
+//theme sidebar dynamic items
+document.addEventListener("DOMContentLoaded", function() {
+    function syncSidebarWidth() {
+        const col = document.querySelector('.newsfeed-col-left');
+        const sidebar = document.querySelector('.fbui-sidebar-wrapper');
+        if (col && sidebar) {
+            sidebar.style.width = col.getBoundingClientRect().width + 'px';
+        }
+    }
+
+    syncSidebarWidth();
+    window.addEventListener('resize', syncSidebarWidth);
+
+    // 1. Independent Toggle for Main Links
+    const linksBtn = document.getElementById('fbui-links-see-more-btn');
+    const linksWrapper = document.getElementById('fbui-links-collapse-wrapper');
+    const linksText = document.getElementById('links-see-more-text');
+    const linksIcon = document.getElementById('links-see-more-icon');
+
+    if (linksBtn && linksWrapper) {
+        linksBtn.onclick = function(e) {
+            e.preventDefault();
+            const isExpanded = linksWrapper.classList.toggle('expanded');
+            if (isExpanded) {
+                linksText.innerText = Ossn.Print('fbui:see_less');
+                linksIcon.className = 'fa fa-chevron-up me-0';
+            } else {
+                linksText.innerText = Ossn.Print('fbui:see_more');
+                linksIcon.className = 'fa fa-chevron-down me-0';
+            }
+        };
+    }
+
+    // Dynamic Screen-Height Calculation subtracting exactly 2 shortcuts height at the bottom
+function autoExpandLinksToFitScreen() {
+        if (!linksWrapper) return;
+
+        const screenHeight = window.innerHeight;
+        
+        // Adjusted base buffer slightly up (~425px) so it stops right above the taskbar edge
+        let occupiedHeight = 425; 
+
+        const shortcutsItems = document.querySelectorAll('.fbui-shortcut-item');
+        if (shortcutsItems.length > 0) {
+            let shortcutsReservedHeight = 60 + (Math.min(shortcutsItems.length, 2) * 52);
+            
+            if (shortcutsItems.length > 2) {
+                shortcutsReservedHeight += 45; 
+            }
+            occupiedHeight += shortcutsReservedHeight;
+        }
+
+        const availableHeightForHidden = screenHeight - occupiedHeight;
+        const itemHeight = 48; 
+        const extraItemsThatCanFit = Math.floor(availableHeightForHidden / itemHeight);
+
+        if (extraItemsThatCanFit > 0) {
+            const collapsibleItems = Array.from(linksWrapper.children);
+            const itemsToReveal = collapsibleItems.slice(0, Math.max(0, extraItemsThatCanFit));
+            
+            const mainList = document.getElementById('fbui-sidebar-main-list');
+            
+            itemsToReveal.forEach(item => {
+                mainList.insertBefore(item, linksWrapper);
+            });
+
+            if (linksWrapper.children.length === 0) {
+                if (linksBtn) linksBtn.style.display = 'none';
+            }
+        }
+    }
+
+    autoExpandLinksToFitScreen();
+
+    // 2. Independent Toggle for Shortcuts (> 2 items)
+    const shortcutsBtn = document.getElementById('fbui-shortcuts-see-more-btn');
+    const shortcutsWrapper = document.getElementById('fbui-shortcuts-collapse-wrapper');
+    const shortcutsText = document.getElementById('shortcuts-see-more-text');
+    const shortcutsIcon = document.getElementById('shortcuts-see-more-icon');
+
+    if (shortcutsBtn && shortcutsWrapper) {
+        shortcutsBtn.onclick = function(e) {
+            e.preventDefault();
+            const isExpanded = shortcutsWrapper.classList.toggle('expanded');
+            if (isExpanded) {
+                shortcutsText.innerText = Ossn.Print('fbui:see_less');
+                shortcutsIcon.className = 'fa fa-chevron-up me-0';
+            } else {
+                shortcutsText.innerText = Ossn.Print('fbui:see_more');
+                shortcutsIcon.className = 'fa fa-chevron-down me-0';
+            }
+        };
+    }
+
+    // Handle Shortcut Deletion via OSSN.PostRequest
+    document.querySelectorAll('.fbui-shortcut-delete').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const type = this.getAttribute('data-type');
+            const guid = this.getAttribute('data-guid');
+            const itemRow = this.closest('.fbui-shortcut-item');
+
+            Ossn.PostRequest({
+                url: Ossn.site_url + 'action/fbui/shortcut/delete',
+                params: "&type=" + type + "&guid=" + guid,
+                callback: function(callback) {
+                    if (itemRow) {
+                        itemRow.style.opacity = '0';
+                        setTimeout(function() {
+                            itemRow.remove();
+                        }, 200);
+                    }
+                }
+            });
+        });
+    });
+});
