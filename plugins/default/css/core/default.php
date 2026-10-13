@@ -4661,3 +4661,249 @@ label {
         right: 0px;
     }
 }
+/******** BIRTHDAYS ********/
+/* Main Widget Container */
+.fbui-birthdays-widget {
+    padding: 8px 0;
+    margin-top: 8px;
+    border-top: 1px solid #ced0d4;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Historic", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Header Title */
+.fbui-birthdays-header {
+	font-size: 17px;
+	font-weight: 700;
+	color: #65676b;
+	margin-bottom: 8px;
+	padding: 0 8px;
+}
+
+/* Individual Item Row */
+.fbui-birthday-item {
+	display: flex;
+	align-items: center; /* Vertically centers icon wrapper and text container */
+	gap: 5px;
+	padding: 8px;
+	border-radius: 8px;
+	cursor: pointer;
+	text-decoration: none !important;
+	color: #050505;
+	transition: background-color 0.15s ease;
+}
+
+.fbui-birthday-item:hover {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Gift/Cake Icon Wrapper */
+.fbui-birthday-icon-wrapper {
+	width: 32px;
+	height: 32px;
+	min-width: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 0; /* Prevents inline whitespace shift */
+}
+
+/* SVG Gift Box Styling */
+.fbui-gift-svg {
+	width: 28px;
+	height: 28px;
+	display: block; /* Removes baseline inline gap */
+}
+
+/* Text Content Container */
+.fbui-birthday-content {
+	font-size: 14px;
+	line-height: 1.35; /* Normalizes line-height for exact vertical centering */
+	color: #050505;
+	display: inline-block;
+	margin-top:-4px;
+}
+
+.fbui-birthday-content b {
+	font-weight: 600;
+	color: #050505;
+}
+
+/* Subtext for Upcoming Dates */
+.fbui-birthday-subtext {
+	font-size: 13px;
+	color: #65676b;
+	margin-top: 2px;
+}
+
+/* Empty State Fallback */
+.fbui-no-birthdays {
+	font-size: 14px;
+	color: #65676b;
+	padding: 8px;
+}
+/*************************************************
+	NEWSFEED RIGHT COLUMN CONTACTS WIDGET
+**************************************************/
+.fbui-newsfeed-contacts-widget {
+	background: transparent;
+	padding: 8px 0;
+	margin-top: 12px;
+	border-top: 1px solid #ced0d4;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Historic", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Header Section */
+.fbui-contacts-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 8px 8px 8px;
+}
+
+.fbui-contacts-title {
+	font-size: 17px;
+	font-weight: 700;
+	color: #65676b;
+}
+
+.fbui-contacts-actions {
+	display: flex;
+	align-items: center;
+}
+
+.fbui-contact-icon-btn {
+	background: transparent;
+	border: none;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	color: #65676b;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.2s ease;
+}
+
+.fbui-contact-icon-btn:hover {
+	background: rgba(0, 0, 0, 0.06);
+}
+
+/* Search Box Input */
+.fbui-contacts-search {
+	padding: 4px 8px 8px 8px;
+}
+
+.fbui-contacts-search input {
+	width: 100%;
+	padding: 6px 12px;
+	border-radius: 18px;
+	border: none;
+	background: #e4e6eb;
+	font-size: 13px;
+	outline: none;
+	box-sizing: border-box;
+}
+
+/* Scrollable Contacts List Container */
+.fbui-contacts-list {
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	height: 380px !important;
+	max-height: 380px !important;
+	overflow-y: scroll !important;
+	display: block !important;
+}
+
+.fbui-contacts-list::-webkit-scrollbar {
+	width: 6px;
+}
+
+.fbui-contacts-list::-webkit-scrollbar-thumb {
+	background-color: #ced0d4;
+	border-radius: 3px;
+}
+
+/* Contact Item Row */
+.fbui-contact-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.15s ease;
+}
+
+.fbui-contact-item:hover {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+/* Avatar Wrapper & Badges */
+.fbui-contact-avatar-wrapper {
+	position: relative;
+	width: 36px;
+	height: 36px;
+	min-width: 36px;
+}
+
+.fbui-contact-avatar-wrapper img {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.fbui-status-badge {
+	position: absolute;
+	bottom: -1px;
+	right: -2px;
+	border: 2px solid #ffffff;
+	border-radius: 10px;
+	font-size: 9px;
+	font-weight: 700;
+	line-height: 1;
+	box-sizing: border-box;
+}
+
+.fbui-status-online {
+	width: 12px;
+	height: 12px;
+	background-color: #31a24c;
+	border-radius: 50%;
+}
+
+.fbui-status-recent {
+	background-color: #e4e6eb;
+	color: #31a24c;
+	padding: 2px 4px;
+	border-radius: 8px;
+}
+
+.fbui-contact-name {
+	font-size: 15px;
+	font-weight: 600;
+	color: #050505;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* CENTERED LOADING SPINNER SENTINEL */
+#fbui-contacts-scroll-sentinel {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 12px 0;
+}
+
+#fbui-contacts-scroll-sentinel .ossn-loading {
+	margin: 0 auto;
+}
+
+/* Hide native pagination container visually */
+.fbui-contacts-pagination-container {
+	display: none !important;
+}
