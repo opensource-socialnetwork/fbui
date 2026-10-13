@@ -117,13 +117,13 @@ $menus = $params['menu'];
 				</li>			
                 <?php } ?>	
 				<div class="fbui-create-divider"></div>
-				<?php if(com_is_active('BusinessPage')){ ?>
 				<li>
 					<a id="topbar-megamenu-groupadd" href="javascript::void(0);" onclick="$('#ossn-group-add').trigger('click');">
 						<span class="fbui-create-icon"><i class="fa fa-users"></i></span>
 						<?php echo ossn_print('fbui:group');?>
 					</a>
-				</li>
+				</li>                
+				<?php if(com_is_active('BusinessPage')){ ?>
 				<li>
 					<a href="javascript::void(0);">
 						<span class="fbui-create-icon"><i class="fa fa-users"></i></span>
