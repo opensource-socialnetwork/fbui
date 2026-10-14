@@ -802,10 +802,7 @@
 }
 
 .profile-edit-layout-right .radio-block {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 20px;
-    margin-top: 5px;
+
 }
 
 .profile-edit-layout-right .radio-block input[type="radio"] {
