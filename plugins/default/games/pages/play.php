@@ -14,8 +14,7 @@ if (!ossn_isLoggedin()) {
 }
 
 $game_id = isset($params['game_id']) ? trim($params['game_id']) : '';
-$cache_file = ossn_get_userdata("gamepix_cache.json");
-
+$cache_file = ossn_route()->themes . "fbui/vendors/games/gamepix_cache.json";
 $game = null;
 
 if (file_exists($cache_file)) {
