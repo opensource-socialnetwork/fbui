@@ -391,10 +391,14 @@
 
 .ossn-inmessage-status-offline .ossn-inmessage-status-circle {
 	background: #bebebe;
+    left: 0;
+    margin-left: 35px;	
 }
 
 .ossn-inmessage-status-online .ossn-inmessage-status-circle {
 	background: #31a24c;
+    left: 0;
+    margin-left: 35px;	
 }
 
 .ossn-message-delete-conversation {
@@ -496,6 +500,7 @@
 	font-weight: bold;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
+	position:relative;
 }
 
 .ossn-messages .ossn-widget .widget-contents {

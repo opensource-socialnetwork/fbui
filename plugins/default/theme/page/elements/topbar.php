@@ -117,10 +117,10 @@ $active_games       = ($context == 'play/all') ? 'class="active"' : ''; // Match
 							<a role="button" class="fbui-user-avatar-btn" data-bs-toggle="dropdown" href="javascript:void(0);">
 								<div class="fbui-avatar-wrapper">
 									<img src="<?php echo $user->iconURL()->small; ?>" alt="<?php echo $user->fullname; ?>" />
-								</div>
-								<div class="fbui-avatar-caret">
-									<i class="fa fa-chevron-down"></i>
-								</div>
+										<div class="fbui-avatar-caret">
+													<i class="fa fa-chevron-down"></i>
+										</div>
+                                </div>
 							</a>
 							<?php echo ossn_view_menu('topbar_dropdown'); ?>
 						</div>

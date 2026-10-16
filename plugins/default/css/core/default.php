@@ -3173,7 +3173,8 @@ label {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    overflow: hidden;
+    position: relative;
+    display: inline-block;
 }
 
 .fbui-avatar-wrapper img {
