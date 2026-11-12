@@ -219,9 +219,11 @@ button.game-filter-pill.active {
 .game-play-header {
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: space-between;
+    gap: 12px;
     margin-bottom: 16px;
     padding: 0 4px;
+    flex-wrap: wrap;
 }
 
 .btn-game-back {
@@ -244,22 +246,79 @@ button.game-filter-pill.active {
 }
 
 .game-play-title {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
     color: #050505;
     margin: 0;
     line-height: 1.2;
+    flex: 1;
+    min-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+/* Fullscreen Toggle Button Style */
+.btn-game-fullscreen {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #1877f2;
+    color: #ffffff !important;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-game-fullscreen:hover {
+    background: #166fe5;
+}
+
 /* Black Theater Stage Box */
 .game-iframe-stage {
+    position: relative;
     background: #000000;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Fullscreen browser state handling */
+.game-iframe-stage:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+}
+
+.game-iframe-stage:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+}
+
+.game-iframe-stage:fullscreen .game-iframe-wrapper {
+    width: 100%;
+    height: 100%;
+    padding-top: 0;
+}
+
+.game-iframe-stage:-webkit-full-screen .game-iframe-wrapper {
+    width: 100%;
+    height: 100%;
+    padding-top: 0;
 }
 
 /* Responsive 16:9 Aspect Ratio Frame Wrapper */
@@ -304,4 +363,45 @@ button.game-filter-pill.active {
     line-height: 1.5;
     color: #65676b;
     margin: 0;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .game-play-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .game-play-title {
+        text-align: center;
+        order: -1;
+    }
+    .btn-game-back, .btn-game-fullscreen {
+        width: 100%;
+        justify-content: center;
+    }
+}
+/* Hidden by default in normal view */
+.btn-exit-fullscreen {
+    display: none;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 99999;
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(4px);
+}
+
+/* Automatically show when container enters fullscreen mode */
+.game-iframe-stage:fullscreen .btn-exit-fullscreen,
+.game-iframe-stage:-webkit-full-screen .btn-exit-fullscreen {
+    display: inline-flex;
 }

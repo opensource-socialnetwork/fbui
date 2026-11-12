@@ -13,54 +13,38 @@ if (!ossn_isLoggedin()) {
     return;
 }
 
-$cache_file = ossn_route()->themes . "fbui/vendors/games/gamepix_cache.json";
-$all_games = array();
-$cache_data = file_get_contents($cache_file);
-$all_games = json_decode($cache_data, true);
-/**
-	$api_url = "https://games.gamepix.com/games?pagination=100&page=1";
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $api_url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+$cache_dir  = ossn_route()->themes . "fbui/vendors/games/";
+$cache_file = $cache_dir . "gamepix_cache.json";
+$gz_file    = $cache_dir . "gamepix_cache.json.gz";
+$all_games  = array();
 
-    $response = curl_exec($ch);
-    curl_close($ch);
+// AUTO-UNPACK GZIP: If raw JSON is missing but .gz exists, unpack it on the fly
+if (!file_exists($cache_file) && file_exists($gz_file)) {
+    if (extension_loaded('zlib')) {
+        $compressed_data = file_get_contents($gz_file);
+        $json_data = false;
 
-    if ($response) {
-        $res_data = json_decode($response, true);
-        if (!empty($res_data['data']) && is_array($res_data['data'])) {
-            foreach ($res_data['data'] as $item) {
-                if (empty($item['id']) || empty($item['title']) || empty($item['url'])) {
-                    continue;
-                }
+        if (function_exists('gzdecode')) {
+            $json_data = gzdecode($compressed_data);
+        } elseif (function_exists('gzinflate')) {
+            $json_data = @gzinflate(substr($compressed_data, 10, -8));
+        }
 
-                $all_games[] = array(
-                    'id'          => $item['id'],
-                    'title'       => $item['title'],
-                    'category'    => !empty($item['category']) ? ucfirst(strtolower($item['category'])) : 'Arcade',
-                    'thumbnail'   => !empty($item['thumbnailUrl']) ? $item['thumbnailUrl'] : $item['bannerUrl'],
-                    'embed_url'   => $item['url'],
-                    'description' => !empty($item['description']) ? $item['description'] : ''
-                );
-            }
-
-            if (!empty($all_games)) {
-                file_put_contents($cache_file, json_encode($all_games));
-            }
+        if ($json_data !== false && !empty($json_data)) {
+            file_put_contents($cache_file, $json_data);
         }
     }
+}
 
-    if (empty($all_games) && file_exists($cache_file)) {
-        $all_games = json_decode(file_get_contents($cache_file), true);
+// Load and decode the cache file safely
+if (file_exists($cache_file)) {
+    $cache_data = file_get_contents($cache_file);
+    $all_games = json_decode($cache_data, true);
+    if (!is_array($all_games)) {
+        $all_games = array();
     }
-}*/
+}
 
-// 2. Extract unique categories for filter pills
 $categories = array('All');
 if (!empty($all_games) && is_array($all_games)) {
     foreach ($all_games as $g) {
@@ -87,14 +71,16 @@ $display_games = $all_games;
 // Filter by category
 if ($selected_category !== 'All') {
     $display_games = array_filter($display_games, function($g) use ($selected_category) {
-        return strcasecmp($g['category'], $selected_category) === 0;
+        return isset($g['category']) && strcasecmp($g['category'], $selected_category) === 0;
     });
 }
 
 // Filter by search query
 if (!empty($search_query)) {
     $display_games = array_filter($display_games, function($g) use ($search_query) {
-        return stripos($g['title'], $search_query) !== false || stripos($g['category'], $search_query) !== false;
+        $title_match = isset($g['title']) && stripos($g['title'], $search_query) !== false;
+        $cat_match   = isset($g['category']) && stripos($g['category'], $search_query) !== false;
+        return $title_match || $cat_match;
     });
 }
 

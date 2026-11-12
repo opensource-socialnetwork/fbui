@@ -95,5 +95,7 @@ $en = array(
 		'fbui:shortcuts'                 => 'Your shortcuts',
 		'fbui:see_more'                  => 'See more',
 		'fbui:see_less'                  => 'See less',
+		'fbui:games:exitfs'              => 'Exit Fullscreen',
+		'fbui:games:fulls'               => 'Fullscreen',
 );
 ossn_register_languages('en', $en);
